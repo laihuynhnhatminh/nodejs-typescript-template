@@ -1,34 +1,41 @@
-/**
- * Some predefined delay values (in milliseconds).
- */
-export enum Delays {
-  Short = 500,
-  Medium = 2000,
-  Long = 5000,
-}
+import { MessageStatus } from "./modules/notifications/enums/messageStatus.enum.js";
+import { NotificationType } from "./modules/notifications/enums/notifications.enum.js";
+import { MessageNotification } from "./modules/notifications/messageNotification.js";
+import { ApplicationMessage } from "./modules/notifications/types/message.type.js";
 
-/**
- * Returns a Promise<string> that resolves after a given time.
- *
- * @param {string} name - A name.
- * @param {number=} [delay=Delays.Medium] - A number of milliseconds to delay resolution of the Promise.
- * @returns {Promise<string>}
- */
-function delayedHello(
-  name: string,
-  delay: number = Delays.Medium,
-): Promise<string> {
-  return new Promise((resolve: (value?: string) => void) =>
-    setTimeout(() => resolve(`Hello, ${name}`), delay),
-  );
-}
 
-// Please see the comment in the .eslintrc.json file about the suppressed rule!
-// Below is an example of how to use ESLint errors suppression. You can read more
-// at https://eslint.org/docs/latest/user-guide/configuring/rules#disabling-rules
+const notificationArray: ApplicationMessage[] = [
+  {
+    notificationType: NotificationType.Email,
+    message: "Welcome to our platform",
+    status: MessageStatus.PENDING,
+    userEmail: "fakeUser@email.com",
+  },
+  {
+    notificationType: NotificationType.SMS,
+    message: "Your order has been shipped",
+    status: MessageStatus.PENDING,
+    userEmail: "fakeUser@email.com",
+    userPhoneNumber: "+1234567890"
+  },
+  {
+    notificationType: NotificationType.PushNotification,
+    message: "You have a new friend request",
+    userEmail: "fakeUser@email.com",
+    status: MessageStatus.PENDING,
+    userPhoneId: "abc123"
+  },
+  {
+    notificationType: NotificationType.InAppNotification,
+    message: "You have a new message",
+    userEmail: "fakeUser@email.com",
+    status: MessageStatus.PENDING,
+    userPhoneId: "abc123"
+  }
+];
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export async function greeter(name: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
-  // The name parameter should be of type string. Any is used only to trigger the rule.
-  return await delayedHello(name, Delays.Long);
+const messageNotification = new MessageNotification();
+
+for (const notification of notificationArray) {
+  messageNotification.sendNotification(notification);
 }
