@@ -1,6 +1,6 @@
 class Node<T> {
   data: T;
-  next: Node<T>;
+  next: Node<T> ;
 
   constructor(data: T, next: Node<T> = null) {
     this.data = data;
@@ -73,7 +73,6 @@ class LinkedList<T> {
     this.size++;
   }
 
-  // Get at index
   getAt(index: number): T {
     let current = this.head;
 
@@ -89,7 +88,49 @@ class LinkedList<T> {
     return current.data;
   }
 
-  // Remove at index
+  getIndexOf(data: T): number {
+    let current = this.head;
+    let count = 0;
+
+    while (current) {
+      if (current.data === data) {
+        return count;
+      }
+      current = current.next;
+      count++;
+    }
+
+    return -1;
+  }
+
+  // Clone method
+
+  // Work but will mutate original head and inputHead
+  zipperList(inputHead: Node<T>): LinkedList<T> {
+    let tail = this.head;
+    let current1 = this.head.next;
+    let current2 = inputHead;
+    let count = 0;
+
+    while(current1 !== null && current2 !== null) {
+      if (count % 2 === 0) {
+        tail.next = current2;
+        current2 = current2.next;
+      } else {
+        tail.next = current1;
+        current1 = current1.next;
+      }
+
+      tail = tail.next;
+      count++;
+    }
+
+    if (current1 !== null) tail.next = current1;
+    if (current2 !== null) tail.next = current2;
+
+    return new LinkedList(this.head, count);
+  }
+
   removeAt(index: number): void {
     let current = this.head;
     let previous: Node<T> = null;
@@ -114,13 +155,38 @@ class LinkedList<T> {
     this.size--;
   }
 
-  // Clear list
+  // Return a new reversed linked list, does not mutate the original list
+  reverseList(): LinkedList<T> {
+    let previous: Node<T> = null;
+    let current = this.head;
+
+    while (current) {
+      const next = current.next;
+      current.next = previous;
+      previous = current;
+      current = next;
+    }
+
+    return new LinkedList(previous, this.size);
+  }
+
+  toArray(): T[] {
+    const arr = [];
+    let current = this.head;
+
+    while (current) {
+      arr.push(current.data);
+      current = current.next;
+    }
+
+    return arr;
+  }
+
   clearList(): void {
     this.head = null;
     this.size = 0;
   }
 
-  // Print list data
   printListData(): void {
     let current = this.head;
 
@@ -131,22 +197,13 @@ class LinkedList<T> {
   }
 }
 
-type ValueIndex = {
-  index: number;
-  value: number;
-}
-
-const ll = new LinkedList<ValueIndex>();
-
-const index = 2000;
-const size = 10000;
+const linkedListExample = new LinkedList<number>();
+const linkedListExample2 = new LinkedList<number>();
+const size = 3;
 
 for (let i = 0; i < size; i++) {
-  ll.insertLast({index: i, value: Math.random()});
+  linkedListExample.insertLast((i + 1) * 100);
+  linkedListExample2.insertLast((i + 1) * 500);
 }
 
-const t1 = performance.now();
-const result = ll.getAt(index);
-const t2 = performance.now();
-
-console.log(`Take ${t2-t1} to get item at index ${index}`, result);
+console.log(linkedListExample, linkedListExample2);
